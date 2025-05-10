@@ -7,7 +7,7 @@ import Exa from 'exa-js';
 
 dotenv.config();
 
-const exa = new Exa(process.env.EXA_API_KEY);
+const exa = new Exa(process.env.NEXT_PUBLIC_EXA_API_KEY);
 
 export default function Home() {
   const [messages, setMessages] = useState<{ text: string; isUser: boolean }[]>([]);
@@ -65,6 +65,28 @@ export default function Home() {
             includeDomains: ["en.wikipedia.org"]
           }
         );
+
+        const urls = extractUrls(result);
+        const _ = await fetch('https://bubbly-computer.midio.dev:3000/begin', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+            'Access-Control-Allow-Headers': 'Content-Type, Authorization'
+          },
+          body: JSON.stringify({ query: urls})
+        });
+        const response = await fetch('https://bubbly-computer.midio.dev:3000/ask', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+            'Access-Control-Allow-Headers': 'Content-Type, Authorization'
+          },
+          body: JSON.stringify({ query: input})
+        });
         
         // Format the Exa results
         responseText = result.results
@@ -75,10 +97,13 @@ export default function Home() {
         setIsFirstMessage(false);
       } else {
         // Use regular API for subsequent messages
-        const response = await fetch('https://bubbly-computer.midio.dev:3001/ask', {
+        const response = await fetch('https://bubbly-computer.midio.dev:3000/ask', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+            'Access-Control-Allow-Headers': 'Content-Type, Authorization'
           },
           body: JSON.stringify({ query: input })
         });
@@ -106,6 +131,7 @@ export default function Home() {
       setTimeout(() => {
         setIsTalking(false);
       }, 10000);
+
     } catch (error) {
       console.error('Error details:', error);
       setMessages([...newMessages, { 
@@ -233,4 +259,14 @@ export default function Home() {
       </footer>
     </div>
   );
+}
+
+function extractUrls(data) {
+  if (!data || !data.results || !Array.isArray(data.results)) {
+    return [];
+  }
+  
+  return data.results
+    .filter(result => result && result.url)
+    .map(result => result.url);
 }
