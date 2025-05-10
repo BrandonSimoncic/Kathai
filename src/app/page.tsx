@@ -9,6 +9,15 @@ dotenv.config();
 
 const exa = new Exa(process.env.NEXT_PUBLIC_EXA_API_KEY);
 
+interface SearchResult {
+  url: string;
+  text?: string;
+}
+
+interface SearchData {
+  results: SearchResult[];
+}
+
 export default function Home() {
   const [messages, setMessages] = useState<{ text: string; isUser: boolean }[]>([]);
   const [input, setInput] = useState('');
@@ -261,12 +270,12 @@ export default function Home() {
   );
 }
 
-function extractUrls(data) {
+function extractUrls(data: SearchData) {
   if (!data || !data.results || !Array.isArray(data.results)) {
     return [];
   }
   
   return data.results
-    .filter(result => result && result.url)
-    .map(result => result.url);
+    .filter((result: SearchResult) => result && result.url)
+    .map((result: SearchResult) => result.url);
 }
