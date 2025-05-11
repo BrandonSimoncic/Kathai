@@ -1,4 +1,6 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+## KathAI, The Conversational Teacher
+The current state of AI does not give nuance nor does it leave room for the user to learn and grow. Developmentally for children, long term AI use could damage the ability to critically think as well as source information. KathAI aims to teach users about any subject through conversational learning. This approach empowers students to critically think about abstract concepts instead of taking things for face value.
+
 
 ## Getting Started
 
